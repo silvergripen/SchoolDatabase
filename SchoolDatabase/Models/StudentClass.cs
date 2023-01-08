@@ -5,11 +5,17 @@ namespace SchoolDatabase.Models
 {
     public partial class StudentClass
     {
-        public int Id { get; set; }
-        public int? StudentId { get; set; }
-        public int? ClassId { get; set; }
+        public StudentClass()
+        {
+            Classes = new HashSet<Class>();
+            Students = new HashSet<Student>();
+        }
 
-        public virtual Class? Class { get; set; }
-        public virtual Student? Student { get; set; }
+        public int Id { get; set; }
+        public int? ClassId { get; set; }
+        public string? StudentClassName { get; set; }
+
+        public virtual ICollection<Class> Classes { get; set; }
+        public virtual ICollection<Student> Students { get; set; }
     }
 }

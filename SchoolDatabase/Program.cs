@@ -6,10 +6,9 @@ namespace SchoolDatabase
     {
         static void Main(string[] args)
         {
-            //MainMenu Menus = new MainMenu();
-            //Menus.Menu();
-            AddStudent stud = new AddStudent();
-            stud.GetStudentAdd();
+            
+            MainMenu M1 = new MainMenu();
+            M1.Menu();
         }
     }
 }

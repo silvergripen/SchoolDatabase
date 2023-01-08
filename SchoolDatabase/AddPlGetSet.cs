@@ -11,6 +11,9 @@ namespace SchoolDatabase
         public string Fname { get; set; }
         public string Lname { get; set; }
 
-        public string Bday { get; set; }        
+        public string Bday { get; set; }
+        public string workid { get; set; }
+        public string workstart { get; set; }
+        
     }
 }

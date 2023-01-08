@@ -20,8 +20,18 @@ namespace SchoolDatabase
             CallingPersonel PersonelCall= new CallingPersonel();
             CallingStudents StudentCall = new CallingStudents();
             AddPersonel NewPersonel = new AddPersonel();
-            AddStudent NewStudent = new AddStudent();   
+            AddStudent NewStudent = new AddStudent();
+            AddingGrade addGrade = new AddingGrade();
+            MainMenu M1 = new MainMenu();            
+            CallingStudents StudentCallSql = new CallingStudents();
+            Subjects SubjectCall = new Subjects();
+            AddPersonel SqlNewPersonel = new AddPersonel();
+            AddingGrade NewGrade = new AddingGrade();
+            CallingGrade GradeCall = new CallingGrade();
+            CallingAvgSalary SalaryCall = new CallingAvgSalary();
             
+            
+
             Console.Clear();
             Console.WriteLine("Välj vilket nummer du vill ha:");
             Console.WriteLine("1) Kolla upp personalen");
@@ -30,6 +40,9 @@ namespace SchoolDatabase
             Console.WriteLine("4) kolla alla kurser");
             Console.WriteLine("5) Lägg till nya elever");
             Console.WriteLine("6) Lägg till ny personal");
+            Console.WriteLine("7) Lista på alla aktiva kurser.");
+            Console.WriteLine("8) Kolla upp lön för avdelningar");
+            Console.WriteLine("9) Sätt betyg på en elev");
 
 
             Console.Write("\r\nSelect an option: ");
@@ -38,7 +51,7 @@ namespace SchoolDatabase
             {
                 case "1":
                     Console.Clear();
-                    PersonelCall.PrintAll();
+                    PersonelCall.GetPersonelList();
                     return true;
                 case "2":
                     Console.Clear();
@@ -57,6 +70,18 @@ namespace SchoolDatabase
                 case "6":
                     Console.Clear();
                     NewPersonel.adding();
+                    return true;
+                case "7":
+                    Console.Clear();
+                    SubjectCall.ActiveSubjects();
+                    return true;
+                case "8":
+                    Console.Clear();
+                    SalaryCall.printSalaryMenu();
+                    return true;
+                case "9":
+                    Console.Clear();
+                    addGrade.addingGrades();
                     return true;
                 default:
                     return true;

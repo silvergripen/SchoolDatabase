@@ -18,15 +18,18 @@ namespace SchoolDatabase.Data
         }
 
         public virtual DbSet<Adress> Adresses { get; set; } = null!;
+        public virtual DbSet<AverageSalary> AverageSalaries { get; set; } = null!;
         public virtual DbSet<Class> Classes { get; set; } = null!;
         public virtual DbSet<Grade> Grades { get; set; } = null!;
         public virtual DbSet<GradeSet> GradeSets { get; set; } = null!;
         public virtual DbSet<Personel> Personels { get; set; } = null!;
         public virtual DbSet<PersonelClass> PersonelClasses { get; set; } = null!;
+        public virtual DbSet<Schedule> Schedules { get; set; } = null!;
         public virtual DbSet<Student> Students { get; set; } = null!;
         public virtual DbSet<StudentClass> StudentClasses { get; set; } = null!;
         public virtual DbSet<StudentSubject> StudentSubjects { get; set; } = null!;
         public virtual DbSet<Subject> Subjects { get; set; } = null!;
+        public virtual DbSet<SumSalary> SumSalaries { get; set; } = null!;
         public virtual DbSet<Work> Works { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -51,9 +54,23 @@ namespace SchoolDatabase.Data
                 entity.Property(e => e.County).HasMaxLength(50);
             });
 
+            modelBuilder.Entity<AverageSalary>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("AverageSalary");
+
+                entity.Property(e => e.AvgSalary).HasColumnName("Avg Salary");
+
+                entity.Property(e => e.Work).HasMaxLength(50);
+            });
+
             modelBuilder.Entity<Class>(entity =>
             {
-                entity.Property(e => e.Classdate).HasColumnType("datetime");
+                entity.HasOne(d => d.StudClass)
+                    .WithMany(p => p.Classes)
+                    .HasForeignKey(d => d.StudClassid)
+                    .HasConstraintName("FK_Classes_StudentClass");
 
                 entity.HasOne(d => d.Subject)
                     .WithMany(p => p.Classes)
@@ -70,6 +87,8 @@ namespace SchoolDatabase.Data
 
                 entity.Property(e => e.Grade1).HasColumnName("Grade");
 
+                entity.Property(e => e.TeacherSetId).HasColumnName("TeacherSetID");
+
                 entity.HasOne(d => d.Grade1Navigation)
                     .WithMany(p => p.Grades)
                     .HasForeignKey(d => d.Grade1)
@@ -84,6 +103,11 @@ namespace SchoolDatabase.Data
                     .WithMany(p => p.Grades)
                     .HasForeignKey(d => d.Subjectid)
                     .HasConstraintName("FK_Grade_Subject1");
+
+                entity.HasOne(d => d.TeacherSet)
+                    .WithMany(p => p.Grades)
+                    .HasForeignKey(d => d.TeacherSetId)
+                    .HasConstraintName("FK_Grade_Personel");
             });
 
             modelBuilder.Entity<GradeSet>(entity =>
@@ -106,6 +130,8 @@ namespace SchoolDatabase.Data
                 entity.Property(e => e.Fname).HasMaxLength(50);
 
                 entity.Property(e => e.Lname).HasMaxLength(50);
+
+                entity.Property(e => e.WorkStart).HasColumnType("date");
 
                 entity.HasOne(d => d.Adress)
                     .WithMany(p => p.Personels)
@@ -134,6 +160,22 @@ namespace SchoolDatabase.Data
                     .HasConstraintName("FK_PersonelClasses_Personel");
             });
 
+            modelBuilder.Entity<Schedule>(entity =>
+            {
+                entity.ToTable("Schedule");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.DayofWeek).HasMaxLength(50);
+
+                entity.Property(e => e.TimeofDay).HasColumnType("time(0)");
+
+                entity.HasOne(d => d.Class)
+                    .WithMany(p => p.Schedules)
+                    .HasForeignKey(d => d.Classid)
+                    .HasConstraintName("FK_Schedule_Classes");
+            });
+
             modelBuilder.Entity<Student>(entity =>
             {
                 entity.ToTable("Student");
@@ -150,21 +192,18 @@ namespace SchoolDatabase.Data
                     .WithMany(p => p.Students)
                     .HasForeignKey(d => d.Adressid)
                     .HasConstraintName("FK_Student_Adress1");
+
+                entity.HasOne(d => d.Klass)
+                    .WithMany(p => p.Students)
+                    .HasForeignKey(d => d.Klassid)
+                    .HasConstraintName("FK_Student_StudentClass");
             });
 
             modelBuilder.Entity<StudentClass>(entity =>
             {
                 entity.ToTable("StudentClass");
 
-                entity.HasOne(d => d.Class)
-                    .WithMany(p => p.StudentClasses)
-                    .HasForeignKey(d => d.ClassId)
-                    .HasConstraintName("FK_StudentClass_Classes");
-
-                entity.HasOne(d => d.Student)
-                    .WithMany(p => p.StudentClasses)
-                    .HasForeignKey(d => d.StudentId)
-                    .HasConstraintName("FK_StudentClass_Student");
+                entity.Property(e => e.StudentClassName).HasMaxLength(50);
             });
 
             modelBuilder.Entity<StudentSubject>(entity =>
@@ -189,11 +228,29 @@ namespace SchoolDatabase.Data
                 entity.Property(e => e.SubjectName)
                     .HasMaxLength(50)
                     .HasColumnName("Subject_name");
+
+                entity.HasOne(d => d.Personel)
+                    .WithMany(p => p.Subjects)
+                    .HasForeignKey(d => d.PersonelId)
+                    .HasConstraintName("FK_Subjects_Personel");
+            });
+
+            modelBuilder.Entity<SumSalary>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("sumSalary");
+
+                entity.Property(e => e.AvgSalary).HasColumnName("Avg Salary");
+
+                entity.Property(e => e.Work).HasMaxLength(50);
             });
 
             modelBuilder.Entity<Work>(entity =>
             {
                 entity.ToTable("Work");
+
+                entity.Property(e => e.BaseSalary).HasColumnName("Base Salary");
 
                 entity.Property(e => e.Work1)
                     .HasMaxLength(50)

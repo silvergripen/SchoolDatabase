@@ -12,6 +12,7 @@ namespace SchoolDatabase.Models
 
         public int Workid { get; set; }
         public string? Work1 { get; set; }
+        public int? BaseSalary { get; set; }
 
         public virtual ICollection<Personel> Personels { get; set; }
     }
